@@ -1,0 +1,57 @@
+Для развертывания базы данных необходимо установить Docker Desktop (или удобное для вас решение).
+В корне репозитория, где находится файл .sln, выполнить команду в терминали docker compose up -d
+
+Команды для применения миграций:
+ 1) Из папки решения устанавливаем тулзу (где .sln): dotnet tool install --global dotnet-ef
+ 2) Генерируем миграции: (возможно надо перейти в папку дальше cd TaskHub, если вы не в той)
+ dotnet ef migrations add CreateUsers --project Dal --startup-project Api --context UserDbContext --output-dir Migrations
+ 2.1) Если упали пробуем сбилдить проект:
+ dotnet build Api/Api.csproj
+ 3) Применяем миграции:
+ dotnet ef database update --project Dal --startup-project Api --context UserDbContext
+
+Должно быть так:
+1) TaskHub % dotnet tool install --global dotnet-ef
+Пропуск проверки подписи пакета NuGet.
+Вы можете вызвать это средство с помощью следующей команды: dotnet-ef
+Средство "dotnet-ef" (версии "10.0.2") успешно установлено.  
+
+2) TaskHub %  dotnet ef migrations add CreateUsers --project Dal --startup-project Api --context UserDbContext --output-dir Migrations
+Build started...
+Build succeeded.
+Done. To undo this action, use 'ef migrations remove'
+
+3) TaskHub %  dotnet ef database update --project Dal --startup-project Api --context UserDbContext
+Build started...
+Build succeeded.
+[17:45:38 INF] Executed DbCommand (11ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT "MigrationId", "ProductVersion"                                                                                                                                                                           
+FROM "__EFMigrationsHistory"                                                                                                                                                                                     
+ORDER BY "MigrationId";                                                                                                                                                                                          
+[17:45:38 INF] Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT 1                                                                                                                                                                                                         
+[17:45:38 INF] Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE TABLE IF NOT EXISTS "__EFMigrationsHistory" (                                                                                                                                                             
+    "MigrationId" character varying(150) NOT NULL,                                                                                                                                                               
+    "ProductVersion" character varying(32) NOT NULL,                                                                                                                                                             
+    CONSTRAINT "PK___EFMigrationsHistory" PRIMARY KEY ("MigrationId")                                                                                                                                            
+);                                                                                                                                                                                                               
+[17:45:38 INF] Acquiring an exclusive lock for migration application. See https://aka.ms/efcore-docs-migrations-lock for more information if this takes too long.
+[17:45:38 INF] Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+LOCK TABLE "__EFMigrationsHistory" IN ACCESS EXCLUSIVE MODE                                                                                                                                                      
+[17:45:38 INF] Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT "MigrationId", "ProductVersion"                                                                                                                                                                           
+FROM "__EFMigrationsHistory"                                                                                                                                                                                     
+ORDER BY "MigrationId";                                                                                                                                                                                          
+[17:45:38 INF] Applying migration '20260203124502_CreateUsers'.
+[17:45:39 INF] Executed DbCommand (4ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+CREATE TABLE users (                                                                                                                                                                                             
+    "Id" uuid NOT NULL,                                                                                                                                                                                          
+    name character varying(200),                                                                                                                                                                                 
+    last_activity_utc timestamp with time zone NOT NULL,                                                                                                                                                         
+    CONSTRAINT "PK_users" PRIMARY KEY ("Id")                                                                                                                                                                     
+);                                                                                                                                                                                                               
+[17:45:39 INF] Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")                                                                                                                                            
+VALUES ('20260203124502_CreateUsers', '10.0.2');                                                                                                                                                                 
+Done.

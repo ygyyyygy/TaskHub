@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: taskhub-postgres
+    environment:
+      POSTGRES_DB: taskhub
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - taskhub-postgres-data:/var/lib/postgresql/data
+
+volumes:
+  taskhub-postgres-data:
