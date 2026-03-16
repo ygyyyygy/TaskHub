@@ -1,10 +1,10 @@
+using Api.Attributes;
 using Api.Middleware;
 using Api.UseCases.Users;
 using Api.UseCases.Users.Interfaces;
 using Dal;
 using Logic;
 using Microsoft.OpenApi.Models;
-
 
 namespace Api;
 
@@ -40,6 +40,10 @@ public sealed class Startup
         services.AddLogic();
         
         services.AddScoped<IManageUserUseCase, ManageUserUseCase>();
+        
+        services.AddScoped<ResponseTimeHeaderAttribute>();
+        services.AddScoped<StudentInfoHeadersAttribute>();
+        services.AddScoped<ValidateUserRequestAttribute>();
         
         services.AddCors(options =>
         {

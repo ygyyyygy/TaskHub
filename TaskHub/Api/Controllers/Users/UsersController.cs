@@ -1,3 +1,4 @@
+using Api.Attributes;
 using Api.Controllers.Users.Request;
 using Api.Controllers.Users.Response;
 using Api.UseCases.Users.Interfaces;
@@ -10,6 +11,7 @@ namespace Api.Controllers.Users;
 /// </summary>
 [ApiController]
 [Route("users")]
+[StudentInfoHeaders]
 public sealed class UsersController : ControllerBase
 {
     /// <summary>
@@ -29,6 +31,8 @@ public sealed class UsersController : ControllerBase
     /// <param name="cancellationToken">Токен отмены</param>
     /// <returns>Созданный пользователь</returns>
     [HttpPost]
+    [ResponseTimeHeader]
+    [ValidateUserRequest]
     public async Task<ActionResult<UserResponse>> CreateUserAsync(
         [FromBody] CreateUserRequest? request,
         CancellationToken cancellationToken)
@@ -43,6 +47,7 @@ public sealed class UsersController : ControllerBase
     /// <param name="cancellationToken">Токен отмены</param>
     /// <returns>Список пользователей</returns>
     [HttpGet]
+    [ResponseTimeHeader]
     public async Task<ActionResult<UserListResponse>> GetAllUsersAsync(CancellationToken cancellationToken)
     {
         var response = await _userUseCase.GetAllUsersAsync(cancellationToken);
@@ -56,6 +61,7 @@ public sealed class UsersController : ControllerBase
     /// <param name="cancellationToken">Токен отмены</param>
     /// <returns>Пользователь или 404, если пользователь не найден</returns>
     [HttpGet("{id:guid}")]
+    [ResponseTimeHeader]
     public async Task<ActionResult<UserResponse>> GetUserByIdAsync([FromRoute] Guid id, CancellationToken cancellationToken)
     {
         var userResponse = await _userUseCase.GetUserByIdAsync(id, cancellationToken);
@@ -76,6 +82,8 @@ public sealed class UsersController : ControllerBase
     /// <param name="cancellationToken">Токен отмены</param>
     /// <returns>204 при успехе или 400 при неверном запросе</returns>
     [HttpPut("{id:guid}/name")]
+    [ResponseTimeHeader]
+    [ValidateUserRequest]
     public async Task<IActionResult> SetUserNameAsync(
         [FromRoute] Guid id,
         [FromBody] SetUserNameRequest? request,
@@ -92,6 +100,7 @@ public sealed class UsersController : ControllerBase
     /// <param name="cancellationToken">Токен отмены</param>
     /// <returns>204 при успехе или 404, если пользователь не найден</returns>
     [HttpDelete("{id:guid}")]
+    [ResponseTimeHeader]
     public async Task<IActionResult> DeleteUserByIdAsync([FromRoute] Guid id, CancellationToken cancellationToken)
     {
         var deleted = await _userUseCase.DeleteUserByIdAsync(id, cancellationToken);
@@ -109,6 +118,7 @@ public sealed class UsersController : ControllerBase
     /// <param name="cancellationToken">Токен отмены</param>
     /// <returns>204 при успехе</returns>
     [HttpDelete]
+    [ResponseTimeHeader]
     public async Task<IActionResult> DeleteAllUsersAsync(CancellationToken cancellationToken)
     {
         await _userUseCase.DeleteAllUsersAsync(cancellationToken);
