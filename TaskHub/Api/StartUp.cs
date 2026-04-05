@@ -1,8 +1,21 @@
+using Api.Attributes;
 using Api.Middleware;
+using Api.UseCases.UserTasks;
+using Api.UseCases.UserTasks.Interfaces;
 using Api.UseCases.Users;
 using Api.UseCases.Users.Interfaces;
+using Api.Filters;
 using Dal;
-using Logic;
+using Dal.Context;
+using Dal.Repositories;
+using Dal.Repositories.Interfaces;
+using Logic.UserTasks.Services;
+using Logic.UserTasks.Services.Interfaces;
+using Logic.UserTasks.UseCases;
+using Logic.Users.Services;
+using Logic.Users.Services.Interfaces;
+using Logic.Users.UseCases;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 
@@ -37,9 +50,34 @@ public sealed class Startup
     {
         services.AddControllers();
         services.AddDal();
-        services.AddLogic();
+        // services.AddLogic();
         
         services.AddScoped<IManageUserUseCase, ManageUserUseCase>();
+        
+        // services.AddScoped<ResponseTimeHeaderAttribute>();
+        // services.AddScoped<StudentInfoHeadersAttribute>();
+        // services.AddScoped<ValidateUserRequestAttribute>();
+
+        services.AddScoped<StudentInfoHeadersFilter>();
+        services.AddScoped<RequestLoggingFilter>();
+        services.AddScoped<ValidateCreateUserTaskRequestFilter>();
+        services.AddScoped<ValidateSetUserTaskTitleRequestFilter>();
+
+        services.AddDbContext<UserTaskDbContext>(options =>
+            options.UseNpgsql(Configuration.GetConnectionString("Postgres")));
+
+        services.AddScoped<IUserTaskRepository, UserTaskRepository>();
+
+        services.AddScoped<CreateUserTaskUseCase>();
+        services.AddScoped<GetUserTasksUseCase>();
+        services.AddScoped<GetUserTaskUseCase>();
+        services.AddScoped<SetUserTaskTitleUseCase>();
+        services.AddScoped<DeleteUserTaskUseCase>();
+        services.AddScoped<DeleteUserTasksUseCase>();
+
+        services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IUserTaskService, UserTaskService>();
+        services.AddScoped<IManageUserTaskUseCase, ManageUserTaskUseCase>();
         
         services.AddCors(options =>
         {
