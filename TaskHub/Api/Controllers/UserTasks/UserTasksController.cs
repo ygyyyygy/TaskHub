@@ -1,5 +1,6 @@
 using Api.Controllers.UserTasks.Request;
 using Api.Controllers.UserTasks.Response;
+using Api.Filters;
 using Api.UseCases.UserTasks.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Logic.Users.Services.Interfaces;
@@ -11,6 +12,8 @@ namespace Api.Controllers.UserTasks;
 /// </summary>
 [ApiController]
 [Route("user-tasks")]
+[ServiceFilter(typeof(StudentInfoHeadersFilter))]
+[ServiceFilter(typeof(RequestLoggingFilter))]
 public sealed class UserTasksController : ControllerBase
 {
     private readonly IManageUserTaskUseCase _userTaskUseCase;
@@ -26,20 +29,12 @@ public sealed class UserTasksController : ControllerBase
     /// Создать задачу
     /// </summary>
     [HttpPost]
+    [ServiceFilter(typeof(ValidateCreateUserTaskRequestFilter))]
     public async Task<ActionResult<UserTaskResponse>> CreateUserTaskAsync(
         [FromBody] CreateUserTaskRequest request,
         CancellationToken cancellationToken)
     {
-        var users = await _userService.GetAllUsersAsync(cancellationToken);
-        var existingUser = users.FirstOrDefault();
-        
-        if (existingUser == null)
-        {
-            return BadRequest("Сначала создайте пользователя через POST /users");
-        }
-        
-        var task = await _userTaskUseCase.CreateUserTaskAsync(request.Title, existingUser.Id, cancellationToken);
-        
+        var task = await _userTaskUseCase.CreateUserTaskAsync(request.Title!, request.UserId!.Value, cancellationToken);
         return CreatedAtRoute("GetUserTaskById", new { id = task.Id }, task);
     }
 
@@ -75,6 +70,7 @@ public sealed class UserTasksController : ControllerBase
     /// Изменить название задачи
     /// </summary>
     [HttpPut("{id:guid}/title")]
+    [ServiceFilter(typeof(ValidateSetUserTaskTitleRequestFilter))]
     public async Task<IActionResult> SetUserTaskTitleAsync(
         [FromRoute] Guid id,
         [FromBody] SetUserTaskTitleRequest request,

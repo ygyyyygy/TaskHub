@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace Api.Controllers.UserTasks.Request;
 
 /// <summary>
@@ -8,5 +10,12 @@ public record CreateUserTaskRequest
     /// <summary>
     /// Название задачи
     /// </summary>
-    public required string Title { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? Title { get; init; }
+    
+    /// <summary>
+    /// Идентификатор пользователя, создающего задачу
+    /// </summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public Guid? UserId { get; init; }
 }

@@ -4,6 +4,7 @@ using Api.UseCases.UserTasks;
 using Api.UseCases.UserTasks.Interfaces;
 using Api.UseCases.Users;
 using Api.UseCases.Users.Interfaces;
+using Api.Filters;
 using Dal;
 using Dal.Context;
 using Dal.Repositories;
@@ -56,6 +57,11 @@ public sealed class Startup
         // services.AddScoped<ResponseTimeHeaderAttribute>();
         // services.AddScoped<StudentInfoHeadersAttribute>();
         // services.AddScoped<ValidateUserRequestAttribute>();
+
+        services.AddScoped<StudentInfoHeadersFilter>();
+        services.AddScoped<RequestLoggingFilter>();
+        services.AddScoped<ValidateCreateUserTaskRequestFilter>();
+        services.AddScoped<ValidateSetUserTaskTitleRequestFilter>();
 
         services.AddDbContext<UserTaskDbContext>(options =>
             options.UseNpgsql(Configuration.GetConnectionString("Postgres")));
