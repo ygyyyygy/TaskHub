@@ -1,6 +1,7 @@
 using Api.Controllers.UserTasks.Request;
 using Api.Controllers.UserTasks.Response;
 using Api.Filters;
+using Api.ModelBinders;
 using Api.UseCases.UserTasks.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Logic.Users.Services.Interfaces;
@@ -51,9 +52,9 @@ public sealed class UserTasksController : ControllerBase
     /// <summary>
     /// Получить задачу по идентификатору
     /// </summary>
-    [HttpGet("{id:guid}", Name = "GetUserTaskById")]
+    [HttpGet("{id}")]
     public async Task<ActionResult<UserTaskResponse>> GetUserTaskByIdAsync(
-        [FromRoute] Guid id,
+        [FromRouteTaskId] Guid id,
         CancellationToken cancellationToken)
     {
         var taskResponse = await _userTaskUseCase.GetUserTaskByIdAsync(id, cancellationToken);
@@ -69,10 +70,10 @@ public sealed class UserTasksController : ControllerBase
     /// <summary>
     /// Изменить название задачи
     /// </summary>
-    [HttpPut("{id:guid}/title")]
+    [HttpPut("{id}/title")]
     [ServiceFilter(typeof(ValidateSetUserTaskTitleRequestFilter))]
     public async Task<IActionResult> SetUserTaskTitleAsync(
-        [FromRoute] Guid id,
+        [FromRouteTaskId] Guid id,
         [FromBody] SetUserTaskTitleRequest request,
         CancellationToken cancellationToken)
     {
@@ -89,9 +90,9 @@ public sealed class UserTasksController : ControllerBase
     /// <summary>
     /// Удалить задачу по идентификатору
     /// </summary>
-    [HttpDelete("{id:guid}")]
+    [HttpDelete("{id}")] 
     public async Task<IActionResult> DeleteUserTaskByIdAsync(
-        [FromRoute] Guid id,
+        [FromRouteTaskId] Guid id,
         CancellationToken cancellationToken)
     {
         var deleted = await _userTaskUseCase.DeleteUserTaskByIdAsync(id, cancellationToken);
