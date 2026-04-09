@@ -5,7 +5,7 @@ using Logic.Users.Services.Interfaces;
 namespace Logic.Users.Services;
 
 /// <inheritdoc />
-internal sealed class UserService : IUserService
+public sealed class UserService : IUserService
 {
     /// <summary>
     /// Репозиторий управления пользователями
